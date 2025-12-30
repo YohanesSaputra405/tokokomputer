@@ -6,15 +6,16 @@ use App\Http\Controllers\Admin\ProdukController;
 use App\Http\Controllers\Admin\VarianController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\GambarVarianController;
+use App\Http\Controllers\User\ProdukController as UserProdukController;
 
 /*
 |--------------------------------------------------------------------------
 | Public
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/', [UserProdukController::class, 'index'])->name('home');
+Route::get('/produk/{produk}', [UserProdukController::class, 'show'])->name('produk.show');
 
 /*
 |--------------------------------------------------------------------------

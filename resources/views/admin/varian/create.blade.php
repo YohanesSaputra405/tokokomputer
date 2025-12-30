@@ -86,7 +86,9 @@
             <input type="number" name="stok" placeholder="Contoh: 10" required>
 
             <div class="actions">
-                <button type="submit">Simpan & Lanjut Upload Gambar</button>
+                <button type="submit"
+                    onclick="this.disabled=true; this.innerText='Menyimpan...'; this.form.submit();">Simpan & Lanjut
+                    Upload Gambar</button>
                 <a href="{{ route('admin.produk.varian.index', $produk->id) }}">Batal</a>
             </div>
         </form>
