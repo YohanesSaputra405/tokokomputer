@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ $produk->nama_produk }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <style>
         body {
@@ -14,29 +15,30 @@
 
         header {
             background: #0d6efd;
-            color: #fff;
+            color: white;
             padding: 15px 30px;
         }
 
         header a {
-            color: #fff;
+            color: white;
             text-decoration: none;
             font-weight: bold;
         }
 
         .container {
-            padding: 30px;
             max-width: 900px;
-            margin: auto;
+            margin: 30px auto;
+            padding: 0 20px;
         }
 
         .card {
-            background: #fff;
+            background: white;
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 3px 6px rgba(0, 0, 0, .1);
             display: flex;
             gap: 30px;
+            flex-wrap: wrap;
         }
 
         .image-area {
@@ -70,36 +72,40 @@
             border-color: #0d6efd;
         }
 
-        .variant-list {
-            margin: 15px 0;
-        }
-
         .variant-btn {
             padding: 6px 12px;
             border: 1px solid #ddd;
+            background: #f8f9fa;
             border-radius: 4px;
             margin-right: 6px;
             cursor: pointer;
-            background: #f8f9fa;
         }
 
         .variant-btn.active {
             background: #0d6efd;
-            color: #fff;
+            color: white;
             border-color: #0d6efd;
         }
 
         .price {
             font-size: 22px;
-            color: #198754;
             font-weight: bold;
             margin: 10px 0;
         }
 
-        .btn {
+        .price del {
+            color: #999;
+            font-size: 16px;
+        }
+
+        .price span {
+            color: red;
+        }
+
+        .btn-cart {
             padding: 10px 16px;
             background: #198754;
-            color: #fff;
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -125,7 +131,7 @@
             <div class="image-area">
                 <div class="main-image">
                     <img id="mainImage"
-                        src="{{ $defaultGambar ? asset('storage/' . $defaultGambar->path_gambar) : 'https://via.placeholder.com/320' }}">
+                        src="{{ $defaultGambar ? asset('storage/' . $defaultGambar->path_gambar) : 'https://via.placeholder.com/300' }}">
                 </div>
 
                 <div class="thumbs" id="thumbs">
@@ -137,46 +143,55 @@
             </div>
 
             {{-- INFO --}}
-            <div class="info">
+            <div>
                 <h2>{{ $produk->nama_produk }}</h2>
 
                 <div class="price" id="price">
-                    Rp {{ number_format($defaultVarian->harga ?? 0, 0, ',', '.') }}
+                    @if ($defaultVarian && $defaultVarian->is_diskon)
+                        <del>Rp {{ number_format($defaultVarian->harga, 0, ',', '.') }}</del><br>
+                        <span>Rp {{ number_format($defaultVarian->harga_final, 0, ',', '.') }}</span>
+                    @else
+                        Rp {{ number_format($defaultVarian->harga ?? 0, 0, ',', '.') }}
+                    @endif
                 </div>
 
                 <p>{{ $produk->deskripsi }}</p>
 
-                {{-- VARIAN --}}
-                <div class="variant-list">
-                    <strong>Varian:</strong><br><br>
+                <strong>Varian:</strong><br><br>
 
-                    @foreach ($produk->varians as $index => $v)
-                        <button class="variant-btn {{ $index === 0 ? 'active' : '' }}" data-harga="{{ $v->harga }}"
-                            data-gambar='@json($v->gambar)' onclick="changeVarian(this)">
-                            {{ $v->nama_varian }}
-                        </button>
-                    @endforeach
-                </div>
+                @foreach ($produk->varians as $i => $v)
+                    <button class="variant-btn {{ $i == 0 ? 'active' : '' }}" onclick="changeVarian(this)"
+                        data-harga="{{ $v->harga }}" data-harga-final="{{ $v->harga_final }}"
+                        data-diskon="{{ $v->is_diskon }}" data-gambar='@json($v->gambar)'>
+                        {{ $v->nama_varian }}
+                    </button>
+                @endforeach
 
-                <button class="btn">Tambah ke Keranjang</button>
+                <br><br>
+                <button class="btn-cart">Tambah ke Keranjang</button>
             </div>
+
         </div>
     </div>
 
     <script>
         function changeVarian(el) {
-
-            // aktifkan tombol
-            document.querySelectorAll('.variant-btn')
-                .forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
 
-            // update harga
             const harga = el.dataset.harga;
-            document.getElementById('price').innerText =
-                'Rp ' + new Intl.NumberFormat('id-ID').format(harga);
+            const hargaFinal = el.dataset.hargaFinal;
+            const diskon = el.dataset.diskon == 1;
 
-            // update gambar
+            const price = document.getElementById('price');
+            if (diskon) {
+                price.innerHTML =
+                    `<del>Rp ${Number(harga).toLocaleString('id-ID')}</del><br>
+             <span>Rp ${Number(hargaFinal).toLocaleString('id-ID')}</span>`;
+            } else {
+                price.innerText = 'Rp ' + Number(harga).toLocaleString('id-ID');
+            }
+
             const gambar = JSON.parse(el.dataset.gambar);
             const mainImage = document.getElementById('mainImage');
             const thumbs = document.getElementById('thumbs');

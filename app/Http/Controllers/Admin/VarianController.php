@@ -23,25 +23,30 @@ class VarianController extends Controller
     }
 
     public function store(Request $request, Produk $produk)
-    {
-        $request->validate([
-            'nama_varian' => 'required|string|max:100',
-            'harga' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
-        ]);
+{
+    $data = $request->validate([
+        'nama_varian' => 'required|string|max:100',
+        'harga' => 'required|numeric|min:0',
+        'stok' => 'required|integer|min:0',
 
-       $varian = $produk->varians()->create($request->only([
-        'nama_varian',
-        'harga',
-        'stok'
-    ]));
+        'is_diskon' => 'nullable|boolean',
+        'diskon_tipe' => 'nullable|in:persen,nominal',
+        'diskon_nilai' => 'nullable|numeric|min:0',
+        'diskon_mulai' => 'nullable|date',
+        'diskon_selesai' => 'nullable|date',
+    ]);
 
-    // ⬇️ langsung ke edit varian (upload gambar di sana)
+    // handle checkbox
+    $data['is_diskon'] = $request->has('is_diskon');
+
+    $varian = $produk->varians()->create($data);
+
     return redirect()->route(
         'admin.produk.varian.edit',
         [$produk->id, $varian->id]
     );
-    }
+}
+
 
     public function edit(Produk $produk, Varian $varian)
     {
@@ -49,17 +54,25 @@ class VarianController extends Controller
     }
 
     public function update(Request $request, Produk $produk, Varian $varian)
-    {
-        $request->validate([
-            'nama_varian' => 'required|string|max:100',
-            'harga' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
-        ]);
+{
+    $data = $request->validate([
+        'nama_varian' => 'required|string|max:100',
+        'harga' => 'required|numeric|min:0',
+        'stok' => 'required|integer|min:0',
 
-        $varian->update($request->all());
+        'is_diskon' => 'nullable|boolean',
+        'diskon_tipe' => 'nullable|in:persen,nominal',
+        'diskon_nilai' => 'nullable|numeric|min:0',
+        'diskon_mulai' => 'nullable|date',
+        'diskon_selesai' => 'nullable|date',
+    ]);
 
-        return redirect()->route('admin.produk.varian.index', $produk->id);
-    }
+    $data['is_diskon'] = $request->has('is_diskon');
+
+    $varian->update($data);
+
+    return redirect()->route('admin.produk.varian.index', $produk->id);
+}
 
     public function destroy(Produk $produk, Varian $varian)
     {

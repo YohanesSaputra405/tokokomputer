@@ -31,7 +31,7 @@ public function store(LoginRequest $request): RedirectResponse
         return redirect()->intended('/admin/dashboard');
     }
 
-    return redirect()->intended('/dashboard');
+    return redirect()->intended('/');
 }
 
 

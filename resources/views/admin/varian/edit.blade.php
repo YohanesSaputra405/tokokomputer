@@ -100,85 +100,117 @@
 
 <body>
 
-    <div class="card">
-        <!-- ================= EDIT VARIAN ================= -->
-        <h2>Edit Varian</h2>
-        <p>Produk: <strong>{{ $produk->nama_produk }}</strong></p>
+    <!-- ================= EDIT VARIAN + DISKON ================= -->
+    <h2>Edit Varian</h2>
+    <p>Produk: <strong>{{ $produk->nama_produk }}</strong></p>
 
-        <form action="{{ route('admin.produk.varian.update', [$produk->id, $varian->id]) }}" method="POST">
+    <form action="{{ route('admin.produk.varian.update', [$produk->id, $varian->id]) }}" method="POST">
+        @csrf
+        @method('PUT')
 
-            @csrf
-            @method('PUT')
+        <label>Nama Varian</label>
+        <input type="text" name="nama_varian" value="{{ $varian->nama_varian }}" required>
 
-            <label>Nama Varian</label>
-            <input type="text" name="nama_varian" value="{{ $varian->nama_varian }}" required>
+        <label>Harga</label>
+        <input type="number" name="harga" value="{{ $varian->harga }}" required>
 
-            <label>Harga</label>
-            <input type="number" name="harga" value="{{ $varian->harga }}" required>
-
-            <label>Stok</label>
-            <input type="number" name="stok" value="{{ $varian->stok }}" required>
-
-            <button type="submit">Update Varian</button>
-            <a href="{{ route('admin.produk.varian.index', $produk->id) }}" class="btn-back">Kembali</a>
-        </form>
+        <label>Stok</label>
+        <input type="number" name="stok" value="{{ $varian->stok }}" required>
 
         <hr>
 
-        <!-- ================= UPLOAD GAMBAR ================= -->
-        <h3>Upload Gambar Varian</h3>
+        <!-- ================= DISKON VARIAN ================= -->
+        <h3>Diskon Varian</h3>
 
-        <form action="{{ route('admin.produk.varian.gambar.store', [$produk->id, $varian->id]) }}" method="POST"
-            enctype="multipart/form-data">
+        <label>
+            <input type="checkbox" name="is_diskon" value="1" {{ $varian->is_diskon ? 'checked' : '' }}>
+            Aktifkan Diskon
+        </label>
 
-            @csrf
+        <br><br>
 
-            <label>Pilih Gambar</label>
-            <input type="file" name="gambar[]" multiple onchange="previewGambar(this)" required>
-            <div id="preview"></div>
+        <select name="diskon_tipe">
+            <option value="">-- Pilih Tipe --</option>
+            <option value="persen" {{ $varian->diskon_tipe == 'persen' ? 'selected' : '' }}>
+                Persen (%)
+            </option>
+            <option value="nominal" {{ $varian->diskon_tipe == 'nominal' ? 'selected' : '' }}>
+                Nominal (Rp)
+            </option>
+        </select>
 
-            <div class="hint">
-                • Bisa upload <strong>lebih dari satu gambar</strong><br>
-                • Format: JPG, PNG, WEBP<br>
-                • Maksimal 2MB per gambar
-            </div>
+        <br><br>
 
-            <button type="submit">Upload Gambar</button>
-        </form>
+        <input type="number" name="diskon_nilai" value="{{ $varian->diskon_nilai }}" placeholder="Nilai Diskon">
 
-        <hr>
+        <br><br>
 
-        <!-- ================= GALERI GAMBAR ================= -->
-        <h4>Gambar Saat Ini</h4>
+        <input type="datetime-local" name="diskon_mulai"
+            value="{{ optional($varian->diskon_mulai)->format('Y-m-d\TH:i') }}">
 
-        <div class="gallery">
-            @forelse ($varian->gambar as $img)
-                <div style="text-align:center">
+        <input type="datetime-local" name="diskon_selesai"
+            value="{{ optional($varian->diskon_selesai)->format('Y-m-d\TH:i') }}">
 
-                    <img src="{{ asset('storage/' . $img->path_gambar) }}" class="img-varian">
+        <br><br>
 
-                    @if ($img->is_primary)
-                        <div style="color:green;font-weight:bold">⭐ Gambar Utama</div>
-                    @else
-                        <form method="POST" action="{{ route('admin.gambar-varian.primary', $img->id) }}">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit">Jadikan Utama</button>
-                        </form>
-                    @endif
+        <button type="submit">Update Varian</button>
+        <a href="{{ route('admin.produk.varian.index', $produk->id) }}">Kembali</a>
+    </form>
 
-                    <form method="POST" action="{{ route('admin.gambar-varian.destroy', $img->id) }}"
-                        onsubmit="return confirm('Hapus gambar ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button style="background:#dc3545;margin-top:5px">Hapus</button>
-                    </form>
+    <!-- ================= UPLOAD GAMBAR ================= -->
+    <h3>Upload Gambar Varian</h3>
 
-                </div>
-            @empty
-                <p class="empty">Belum ada gambar.</p>
-            @endforelse
+    <form action="{{ route('admin.produk.varian.gambar.store', [$produk->id, $varian->id]) }}" method="POST"
+        enctype="multipart/form-data">
+
+        @csrf
+
+        <label>Pilih Gambar</label>
+        <input type="file" name="gambar[]" multiple onchange="previewGambar(this)" required>
+        <div id="preview"></div>
+
+        <div class="hint">
+            • Bisa upload <strong>lebih dari satu gambar</strong><br>
+            • Format: JPG, PNG, WEBP<br>
+            • Maksimal 2MB per gambar
         </div>
+
+        <button type="submit">Upload Gambar</button>
+    </form>
+
+    <hr>
+
+    <!-- ================= GALERI GAMBAR ================= -->
+    <h4>Gambar Saat Ini</h4>
+
+    <div class="gallery">
+        @forelse ($varian->gambar as $img)
+            <div style="text-align:center">
+
+                <img src="{{ asset('storage/' . $img->path_gambar) }}" class="img-varian">
+
+                @if ($img->is_primary)
+                    <div style="color:green;font-weight:bold">⭐ Gambar Utama</div>
+                @else
+                    <form method="POST" action="{{ route('admin.gambar-varian.primary', $img->id) }}">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit">Jadikan Utama</button>
+                    </form>
+                @endif
+
+                <form method="POST" action="{{ route('admin.gambar-varian.destroy', $img->id) }}"
+                    onsubmit="return confirm('Hapus gambar ini?')">
+                    @csrf
+                    @method('DELETE')
+                    <button style="background:#dc3545;margin-top:5px">Hapus</button>
+                </form>
+
+            </div>
+        @empty
+            <p class="empty">Belum ada gambar.</p>
+        @endforelse
+    </div>
 
     </div>
 
