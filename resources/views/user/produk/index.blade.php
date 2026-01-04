@@ -29,72 +29,7 @@
             font-weight: bold;
         }
 
-        .container {
-            padding: 30px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, .1);
-            position: relative;
-            text-align: center;
-        }
-
-        .card img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        .badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: red;
-            color: white;
-            padding: 4px 8px;
-            font-size: 12px;
-            font-weight: bold;
-            border-radius: 4px;
-        }
-
-        .price {
-            margin: 8px 0;
-            font-weight: bold;
-        }
-
-        .price del {
-            color: #999;
-            font-size: 14px;
-        }
-
-        .price span {
-            color: red;
-            font-size: 16px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 8px 14px;
-            background: #0d6efd;
-            color: white;
-            border-radius: 4px;
-            text-decoration: none;
-        }
-
-        .btn:hover {
-            background: #0b5ed7;
-        }
-
+        /* USER MENU */
         .user-menu {
             position: relative;
             display: inline-block;
@@ -144,6 +79,120 @@
             color: #999;
             cursor: not-allowed;
         }
+
+        /* BANNER */
+        .banner-slider {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 420px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .banner-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .banner-slide.active {
+            opacity: 1;
+        }
+
+        .banner-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .banner-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .5);
+            cursor: pointer;
+        }
+
+        .banner-dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+
+        /* PRODUK */
+        .section-produk {
+            padding: 20px 30px 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, .1);
+            position: relative;
+            text-align: center;
+        }
+
+        .card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: red;
+            color: white;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        .price del {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .price span {
+            color: red;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #0d6efd;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -160,10 +209,7 @@
                     </span>
 
                     <div class="dropdown">
-                        {{-- PROFIL (BELUM ADA HALAMAN) --}}
                         <a href="#" class="disabled">Profil (soon)</a>
-
-                        {{-- LOGOUT --}}
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit">Logout</button>
@@ -176,6 +222,25 @@
         </div>
     </header>
 
+    {{-- BANNER --}}
+    @if ($banners->count())
+        <div class="banner-slider">
+            @foreach ($banners as $index => $banner)
+                <div class="banner-slide {{ $index == 0 ? 'active' : '' }}">
+                    <img src="{{ asset('storage/' . $banner->gambar) }}">
+                </div>
+            @endforeach
+
+            <div class="banner-dots">
+                @foreach ($banners as $index => $banner)
+                    <span class="banner-dot {{ $index == 0 ? 'active' : '' }}"
+                        onclick="goToSlide({{ $index }})"></span>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    <div class="section-produk">Daftar Produk</div>
 
     <div class="container">
         <div class="grid">
@@ -186,16 +251,12 @@
                 @endphp
 
                 <div class="card">
-
                     @if ($varian && $varian->is_diskon)
                         <div class="badge">DISKON</div>
                     @endif
 
-                    @if ($gambar)
-                        <img src="{{ asset('storage/' . $gambar->path_gambar) }}">
-                    @else
-                        <img src="https://via.placeholder.com/300x200?text=No+Image">
-                    @endif
+                    <img
+                        src="{{ $gambar ? asset('storage/' . $gambar->path_gambar) : 'https://via.placeholder.com/300x200' }}">
 
                     <h4>{{ $produk->nama_produk }}</h4>
 
@@ -208,13 +269,31 @@
                         @endif
                     </div>
 
-                    <a href="{{ route('produk.show', $produk->id) }}" class="btn">
-                        Lihat Detail
-                    </a>
+                    <a href="{{ route('produk.show', $produk->id) }}" class="btn">Lihat Detail</a>
                 </div>
             @endforeach
         </div>
     </div>
+
+    <script>
+        const slides = document.querySelectorAll('.banner-slide');
+        const dots = document.querySelectorAll('.banner-dot');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentIndex = index;
+        }
+
+        setInterval(() => {
+            if (slides.length) {
+                showSlide((currentIndex + 1) % slides.length);
+            }
+        }, 3500);
+    </script>
 
 </body>
 

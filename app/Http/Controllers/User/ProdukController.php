@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\Produk;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ProdukController extends Controller
 {
@@ -14,7 +15,8 @@ class ProdukController extends Controller
         'varians.gambarUtama'
     ])->get();
 
-    return view('user.produk.index', compact('produks'));
+    $banners = Banner::where('status', true)->get();
+    return view('user.produk.index', compact('produks', 'banners'));
 }
 
 

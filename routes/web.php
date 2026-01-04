@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\VarianController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\GambarVarianController;
 use App\Http\Controllers\User\ProdukController as UserProdukController;
+use App\Http\Controllers\Admin\BannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,8 @@ use App\Http\Controllers\User\ProdukController as UserProdukController;
 
 Route::get('/', [UserProdukController::class, 'index'])->name('home');
 Route::get('/produk/{produk}', [UserProdukController::class, 'show'])->name('produk.show');
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +52,9 @@ Route::middleware(['auth', 'is_admin'])
         Route::get('/dashboard', function () {
             return view('admin.dashboard');
         })->name('dashboard');
+
+        //banners
+        Route::resource('banners', BannerController::class);
 
         // Kategori
         Route::resource('kategori', KategoriController::class);

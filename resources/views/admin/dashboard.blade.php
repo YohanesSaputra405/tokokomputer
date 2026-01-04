@@ -66,6 +66,14 @@
         button:hover {
             background: #b52a37;
         }
+
+        .menu a.banner {
+            background: #198754;
+        }
+
+        .menu a.banner:hover {
+            background: #157347;
+        }
     </style>
 </head>
 
@@ -85,7 +93,9 @@
         <div class="card menu">
             <a href="{{ route('admin.kategori.index') }}">Kelola Kategori</a>
             <a href="{{ route('admin.produk.index') }}">Kelola Produk</a>
+            <a href="{{ route('admin.banners.index') }}" class="banner">Kelola Banner</a>
         </div>
+
 
         <div class="logout">
             <form method="POST" action="{{ route('logout') }}">
