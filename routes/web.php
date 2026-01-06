@@ -1,13 +1,16 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ProdukController;
 use App\Http\Controllers\Admin\VarianController;
+use App\Http\Controllers\User\WishlistController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\GambarVarianController;
 use App\Http\Controllers\User\ProdukController as UserProdukController;
-use App\Http\Controllers\Admin\BannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +39,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
+        /*
+    |------------------
+    | ❤️ Wishlist
+    |------------------
+    */
+    Route::get('/wishlist', [WishlistController::class, 'index'])
+        ->name('wishlist.index');
+
+    Route::post('/wishlist/{produk}', [WishlistController::class, 'toggle'])
+        ->name('wishlist.toggle');
+
+    Route::delete('/wishlist/{produk}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+
+    /*
+    |------------------
+    | 🛒 Cart
+    |------------------
+    */
+    Route::get('/cart', [CartController::class, 'index'])
+        ->name('cart.index');
+
+    Route::post('/cart/{produk}', [CartController::class, 'store'])
+        ->name('cart.store');
+
+    Route::patch('/cart/{cart}', [CartController::class, 'update'])
+    ->name('cart.update');
+
+    Route::post('/cart/from-wishlist/{produk}', [CartController::class, 'fromWishlist'])
+        ->name('cart.fromWishlist');
+
+    Route::delete('/cart/{cart}', [CartController::class, 'destroy'])
+        ->name('cart.destroy');
 
 });
 
