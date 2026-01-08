@@ -100,7 +100,7 @@
                         <td>{{ $item->nama_varian }}</td>
 
                         <td>
-                            @if ($item->is_diskon)
+                            @if ($item->is_diskon && $item->harga_final < $item->harga)
                                 <del>Rp {{ number_format($item->harga) }}</del><br>
                                 <b style="color:red">
                                     Rp {{ number_format($item->harga_final) }}

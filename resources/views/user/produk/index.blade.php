@@ -386,7 +386,7 @@
                 @endphp
                 <div class="card">
                     {{-- BADGE DISKON --}}
-                    @if ($varian && $varian->is_diskon)
+                    @if ($varian && $varian->harga_final < $varian->harga)
                         <div class="badge-diskon">DISKON</div>
                     @endif
 
@@ -415,13 +415,11 @@
 
                     {{-- HARGA --}}
                     <div class="price">
-                        @if ($varian && $varian->is_diskon)
+                        @if ($varian && $varian->harga_final < $varian->harga)
                             <del>Rp {{ number_format($varian->harga, 0, ',', '.') }}</del><br>
                             <span>Rp {{ number_format($varian->harga_final, 0, ',', '.') }}</span>
                         @elseif($varian)
-                            Rp {{ number_format($varian->harga ?? 0, 0, ',', '.') }}
-                        @else
-                            <span style="color: #999;">Harga belum tersedia</span>
+                            Rp {{ number_format($varian->harga, 0, ',', '.') }}
                         @endif
                     </div>
 

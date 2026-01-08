@@ -273,7 +273,7 @@
                 <h2>{{ $produk->nama_produk }}</h2>
 
                 <div class="price" id="price">
-                    @if ($activeVarian && $activeVarian->is_diskon)
+                    @if ($activeVarian && $activeVarian->harga_final < $activeVarian->harga)
                         <del>Rp {{ number_format($activeVarian->harga, 0, ',', '.') }}</del><br>
                         <span>Rp {{ number_format($activeVarian->harga_final, 0, ',', '.') }}</span>
                     @else
@@ -365,8 +365,8 @@
                 nama: el.dataset.nama,
                 stok: parseInt(el.dataset.stok),
                 harga: parseInt(el.dataset.harga),
-                harga_final: parseInt(el.dataset.hargaFinal),
-                is_diskon: el.dataset.diskon == '1'
+                harga_final: parseFloat(el.dataset.hargaFinal),
+                is_diskon: parseFloat(el.dataset.hargaFinal) < parseInt(el.dataset.harga)
             };
 
             // Update input hidden
@@ -377,10 +377,11 @@
             if (selectedVarian.is_diskon) {
                 price.innerHTML =
                     `<del>Rp ${selectedVarian.harga.toLocaleString('id-ID')}</del><br>
-                     <span>Rp ${selectedVarian.harga_final.toLocaleString('id-ID')}</span>`;
+         <span>Rp ${selectedVarian.harga_final.toLocaleString('id-ID')}</span>`;
             } else {
                 price.innerHTML = `Rp ${selectedVarian.harga.toLocaleString('id-ID')}`;
             }
+
 
             // Update stok display
             const stokInfo = document.getElementById('stokInfo');

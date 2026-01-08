@@ -50,20 +50,29 @@ class Varian extends Model
     public function getHargaFinalAttribute()
 {
     // kalau tidak diskon
-    if (!$this->is_diskon || !$this->diskon_nilai) {
+    if (
+        !$this->is_diskon ||
+        !$this->diskon_tipe ||
+        !$this->diskon_nilai ||
+        $this->diskon_nilai <= 0
+    ) {
         return $this->harga;
     }
 
     $now = Carbon::now();
 
     // cek waktu mulai diskon
-    if ($this->diskon_mulai && $now->lt($this->diskon_mulai)) {
-        return $this->harga;
+    if ($this->diskon_mulai && $now->lt(
+    Carbon::parse($this->diskon_mulai)->startOfDay()
+    )) {
+    return $this->harga;
     }
 
     // cek waktu selesai diskon
-    if ($this->diskon_selesai && $now->gt($this->diskon_selesai)) {
-        return $this->harga;
+    if ($this->diskon_selesai && $now->gt(
+    Carbon::parse($this->diskon_selesai)->endOfDay()
+    )) {
+    return $this->harga;
     }
 
     // diskon persen

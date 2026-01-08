@@ -12,7 +12,7 @@ class VarianController extends Controller
     // daftar varian per produk
     public function index(Produk $produk)
     {
-        $varians = $produk->varians;
+        $varians = $produk->varians()->with('gambar')->get();
 
         return view('admin.varian.index', compact('produk', 'varians'));
     }
@@ -23,7 +23,7 @@ class VarianController extends Controller
     }
 
     public function store(Request $request, Produk $produk)
-{
+    {
     $data = $request->validate([
         'nama_varian' => 'required|string|max:100',
         'harga' => 'required|numeric|min:0',
@@ -38,6 +38,8 @@ class VarianController extends Controller
 
     // handle checkbox
     $data['is_diskon'] = $request->has('is_diskon');
+    $data['diskon_mulai'] = $request->diskon_mulai ?: null;
+    $data['diskon_selesai'] = $request->diskon_selesai ?: null;
 
     $varian = $produk->varians()->create($data);
 
@@ -68,8 +70,20 @@ class VarianController extends Controller
     ]);
 
     $data['is_diskon'] = $request->has('is_diskon');
+    if ($data['is_diskon']){
+        $request->validate([
+            'diskon_tipe' => 'required|in:persen,nominal',
+            'diskon_nilai' => 'required|numeric|min:0.1',
+        ]);
+    }else{
+        $data['diskon_tipe'] = null;
+        $data['diskon_nilai'] = null;
+        $data['diskon_mulai'] = null;
+        $data['diskon_selesai'] = null;
+    }
 
     $varian->update($data);
+    $varian->refresh();
 
     return redirect()->route('admin.produk.varian.index', $produk->id);
 }

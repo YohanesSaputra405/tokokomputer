@@ -123,28 +123,29 @@
         <h3>Diskon Varian</h3>
 
         <label>
-            <input type="checkbox" name="is_diskon" value="1" {{ $varian->is_diskon ? 'checked' : '' }}>
-            Aktifkan Diskon
+            <input type="checkbox" name="is_diskon" value="1" {{ $varian->is_diskon ? 'checked' : '' }}>Aktifkan
+            Diskon
         </label>
 
         <br><br>
 
-        <select name="diskon_tipe">
+        <label for="diskon_tipe">Tipe Diskon</label>
+
+        <select name="diskon_tipe" id="diskon_tipe">
             <option value="">-- Pilih Tipe --</option>
-            <option value="persen" {{ $varian->diskon_tipe == 'persen' ? 'selected' : '' }}>
-                Persen (%)
-            </option>
-            <option value="nominal" {{ $varian->diskon_tipe == 'nominal' ? 'selected' : '' }}>
-                Nominal (Rp)
-            </option>
+            <option value="persen" {{ $varian->diskon_tipe == 'persen' ? 'selected' : '' }}>Persen (%)</option>
+            <option value="nominal" {{ $varian->diskon_tipe == 'nominal' ? 'selected' : '' }}>Nominal (Rp)</option>
         </select>
 
+        <div class="hint">
+            • Persen: isi 10 untuk 10%<br>
+            • Nominal: isi 100000 (tanpa titik)
+        </div>
         <br><br>
-
-        <input type="number" name="diskon_nilai" value="{{ $varian->diskon_nilai }}" placeholder="Nilai Diskon">
-
+        <label for="diskon_nilai">Nilai Diskon</label>
+        <input type="number" name="diskon_nilai" id="diskon_nilai" value="{{ $varian->diskon_nilai }}"
+            placeholder="Nilai Diskon">
         <br><br>
-
         <input type="datetime-local" name="diskon_mulai"
             value="{{ optional($varian->diskon_mulai)->format('Y-m-d\TH:i') }}">
 

@@ -91,6 +91,8 @@
                     Upload Gambar</button>
                 <a href="{{ route('admin.produk.varian.index', $produk->id) }}">Batal</a>
             </div>
+
+            <hr>
         </form>
     </div>
 
