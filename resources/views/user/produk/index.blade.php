@@ -325,12 +325,17 @@
     <header>
         <h2>Toko Komputer</h2>
         <div class="header-icons">
-            <a href="{{ route('wishlist.index') }}" class="icon">
-                ❤️ <span class="badge">{{ $wishlistCount }}</span>
-            </a>
-            <a href="{{ route('cart.index') }}" class="icon">
-                🛒 <span class="badge">{{ $cartCount }}</span>
-            </a>
+            @auth
+                <a href="{{ route('wishlist.index') }}" class="icon">
+                    ❤️ <span class="badge">{{ $wishlistCount }}</span>
+                </a>
+                <a href="{{ route('cart.index') }}" class="icon">
+                    🛒 <span class="badge">{{ $cartCount }}</span>
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="icon">❤️</a>
+                <a href="{{ route('login') }}" class="icon">🛒</a>
+            @endauth
         </div>
         <div>
             @auth
@@ -429,11 +434,15 @@
                     @endif
 
                     {{-- TOMBOL DETAIL --}}
-                    <a href="{{ route('produk.show', $produk->id) }}"
-                        class="btn {{ $stokHabis ? 'btn-disabled' : '' }}"
-                        {{ $stokHabis ? 'style="pointer-events: none; opacity: 0.6;"' : '' }}>
-                        {{ $stokHabis ? 'Stok Habis' : 'Lihat Detail' }}
-                    </a>
+                    @if (!$varian)
+                        <div class="stok-info stok-habis">Varian tidak tersedia</div>
+                    @else
+                        <a href="{{ route('produk.show', $produk->id) }}"
+                            class="btn {{ $stokHabis ? 'btn-disabled' : '' }}"
+                            {{ $stokHabis ? 'style="pointer-events: none; opacity: 0.6;"' : '' }}>
+                            {{ $stokHabis ? 'Stok Habis' : 'Lihat Detail' }}
+                        </a>
+                    @endif
                 </div>
             @endforeach
         </div>

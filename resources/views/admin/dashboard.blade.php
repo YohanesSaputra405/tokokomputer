@@ -94,6 +94,7 @@
             <a href="{{ route('admin.kategori.index') }}">Kelola Kategori</a>
             <a href="{{ route('admin.produk.index') }}">Kelola Produk</a>
             <a href="{{ route('admin.banners.index') }}" class="banner">Kelola Banner</a>
+            <a href="{{ route('admin.orders.index') }}">Kelola Order</a>
         </div>
 
 
